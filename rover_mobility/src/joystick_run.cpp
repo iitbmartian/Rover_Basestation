@@ -4,6 +4,8 @@
 
 #define MAX_LIN_SPEED 230
 #define MAX_ANGLE 30
+#define MAX_ANGLE_BR 80
+
 
 ros::Publisher control_pub;
 
@@ -24,15 +26,7 @@ void joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
 	
 	////////////BaseRotation////////////
 	
-	if( but[2] == 1)
-		{
-			out[2] = -1;	
-		}
-	else if ( but[1] == 1)
-		{	
-			out[2] = 1;	
-		}
-	else {out[2] = 0;}
+	out[2] =  - MAX_ANGLE_BR * axe[7];
 
 	////////////ShoulderActuator////////////
 	
@@ -46,25 +40,26 @@ void joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
 		}
 	else {out[3] = 0;}
 
-	////////////ElbowMotor////////////
-	
-	out[4] =  axe[7];
+	////////////Elbow Actuator////////////
 
-	////////////PitchMotor////////////
-	
 	if( but[4] == 1)
 		{
-			out[5] = -1;	
+			out[4] = -1;	
 		}
 	else if ( but[5] == 1)
 		{	
-			out[5] = 1;	
+			out[4] = 1;	
 		}
-	else {out[5] = 0;}
+	else {out[4] = 0;}
 
+
+	////////////PitchMotor////////////
+	
+	out[5]=0
+	
 	////////////RollMotor////////////
 	
-	out[6] =axe[6];
+	out[6] = axe[6];
 
 	////////////GripperMotor////////////
 	
