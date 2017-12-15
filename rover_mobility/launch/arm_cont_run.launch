@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="rover_mobility" name="arm_cont" type="arm_cont_pub.py" output="screen" required="true" /> 
+	<!--<node pkg="arm_mobility" name="arm_command" type="arm_command.py" output="screen" required="true" /> -->
+</launch>
