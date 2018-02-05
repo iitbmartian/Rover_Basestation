@@ -4,14 +4,13 @@
 
 #define MAX_LIN_SPEED 230
 #define MAX_ANGLE 30
-#define MAX_ANGLE_BR 80
 
 
 ros::Publisher control_pub;
 
 void joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
 
-	std::vector<float> axe = joy -> axes;
+	std::vector<float> axe = joy -> axes; 
 	std::vector<int> but = joy -> buttons;
 	
 	std::vector<double> out(8, 0);
@@ -26,7 +25,15 @@ void joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
 	
 	////////////BaseRotation////////////
 	
-	out[2] =  - MAX_ANGLE_BR * axe[7];
+	if( but[5] == 1)
+		{
+			out[2] = -1;	
+		}
+	else if ( but[4] == 1)
+		{	
+			out[2] = 1;	
+		}
+	else {out[2] = 0;}
 
 	////////////ShoulderActuator////////////
 	
@@ -42,34 +49,50 @@ void joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
 
 	////////////Elbow Actuator////////////
 
-	if( but[4] == 1)
+	if( axe[7] == 1)
 		{
-			out[4] = -1;	
-		}
-	else if ( but[5] == 1)
-		{	
 			out[4] = 1;	
+		}
+	else if ( axe[7] == -1)
+		{	
+			out[4] = -1;	
 		}
 	else {out[4] = 0;}
 
 
 	////////////PitchMotor////////////
 	
-	out[5]=0
+	if( axe[6] == 1)
+		{
+			out[5] = 1;	
+		}
+	else if ( axe[6] == -1)
+		{	
+			out[5] = -1;	
+		}
+	else {out[5] = 0;}
 	
 	////////////RollMotor////////////
 	
-	out[6] = axe[6];
+	if( but[1] == 1)
+		{
+			out[6] = 1;	
+		}
+	else if ( but[2] == 1)
+		{	
+			out[6] = -1;	
+		}
+	else {out[6] = 0;}
 
 	////////////GripperMotor////////////
 	
 	if( axe[2] == -1)
 		{
-			out[7] = -1;	
+			out[7] = 1;	
 		}
 	else if ( axe[5] == -1)
 		{	
-			out[7] = 1;	
+			out[7] = -1;	
 		}
 	else {out[7] = 0;}
 
