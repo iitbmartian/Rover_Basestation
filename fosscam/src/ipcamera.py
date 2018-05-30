@@ -13,7 +13,7 @@ from cv_bridge import CvBridge, CvBridgeError
         
 if __name__ == '__main__':
     try:
-        camUrl='http://192.168.1.183/videostream.cgi?user=martian_eye&pwd=rover2409'
+        camUrl='udp://10.5.5.9:8554'
         rospy.init_node('foss_node', anonymous=True)
         stream=urllib.urlopen(camUrl)
         print "Correctly opened resource, starting to show feed."

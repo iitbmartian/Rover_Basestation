@@ -1,4 +1,5 @@
 <launch>
 	<node pkg="rover_mobility" name="joystick_run" type="joystick_run" output="screen" required="true" />
 	<node pkg="joy" name="joy_node" type="joy_node" output="screen" required="true" />
+	<node pkg="rover_mobility" name="partial_complete_diff_switch" type="partial_complete_diff_switch.py" output="screen" required="true"/>
 </launch>

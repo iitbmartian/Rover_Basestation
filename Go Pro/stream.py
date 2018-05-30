@@ -47,8 +47,8 @@ SAVE_LOCATION="/tmp/"
 def gopro_live():
 	UDP_IP = "10.5.5.9"
 	UDP_PORT = 8554
-	KEEP_ALIVE_PERIOD = 2500
-	KEEP_ALIVE_CMD = 2
+	KEEP_ALIVE_PERIOD = 2000
+	KEEP_ALIVE_CMD = 1.5
 
 	MESSAGE = get_command_msg(KEEP_ALIVE_CMD)
 	URL = "http://10.5.5.9:8080/live/amba.m3u8"
@@ -59,6 +59,7 @@ def gopro_live():
 		response=jsondata["info"]["firmware_version"]
 	except http.client.BadStatusLine:
 		response = urlopen('http://10.5.5.9/camera/cv').read().decode('utf-8')
+
 	if "HD4" in response or "HD3.2" in response or "HD5" in response or "HX" in response or "HD6" in response:
 		print("branch HD4")
 		print(jsondata["info"]["model_name"]+"\n"+jsondata["info"]["firmware_version"])
@@ -83,28 +84,29 @@ def gopro_live():
 				json_data = json.loads(data.decode(encoding))
 				if json_data["status"]["31"] >= 1:
 					connectedStatus=True
+					print("Go Pro connected!")
 		##
 		## Opens the stream over udp in ffplay. This is a known working configuration by Reddit user hoppjerka:
 		## https://www.reddit.com/r/gopro/comments/2md8hm/how_to_livestream_from_a_gopro_hero4/cr1b193
 		##
-		loglevel_verbose=""
-		if VERBOSE==False:
-			loglevel_verbose = "-loglevel panic"
-		if SAVE == False:
-			subprocess.Popen("ffplay " + loglevel_verbose + " -fflags nobuffer -f:v mpegts -probesize 8192 udp://:8554", shell=True)
-		else:
-			if SAVE_FORMAT=="ts":
-				TS_PARAMS = " -acodec copy -vcodec copy "
-			else:
-				TS_PARAMS = ""
-			SAVELOCATION = SAVE_LOCATION + SAVE_FILENAME + "." + SAVE_FORMAT
-			print("Recording locally: " + str(SAVE))
-			print("Recording stored in: " + SAVELOCATION)
-			print("Note: Preview is not available when saving the stream.")
-			subprocess.Popen("ffmpeg -i 'udp://:8554' -fflags nobuffer -f:v mpegts -probesize 8192 " + TS_PARAMS + SAVELOCATION, shell=True)
-		if sys.version_info.major >= 3:
-			MESSAGE = bytes(MESSAGE, "utf-8")
-		print("Press ctrl+C to quit this application.\n")
+		# loglevel_verbose=""
+		# if VERBOSE==False:
+		# 	loglevel_verbose = "-loglevel panic"
+		# if SAVE == False:
+		# 	subprocess.Popen("ffplay " + loglevel_verbose + " -fflags nobuffer -f:v mpegts -probesize 8192 udp://:8554", shell=True)
+		# else:
+		# 	if SAVE_FORMAT=="ts":
+		# 		TS_PARAMS = " -acodec copy -vcodec copy "
+		# 	else:
+		# 		TS_PARAMS = ""
+		# 	SAVELOCATION = SAVE_LOCATION + SAVE_FILENAME + "." + SAVE_FORMAT
+		# 	print("Recording locally: " + str(SAVE))
+		# 	print("Recording stored in: " + SAVELOCATION)
+		# 	print("Note: Preview is not available when saving the stream.")
+		# 	subprocess.Popen("ffmpeg -i 'udp://:8554' -fflags nobuffer -f:v mpegts -probesize 8192 " + TS_PARAMS + SAVELOCATION, shell=True)
+		# if sys.version_info.major >= 3:
+		# 	MESSAGE = bytes(MESSAGE, "utf-8")
+		# print("Press ctrl+C to quit this application.\n")
 		while True:
 			sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 			sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))

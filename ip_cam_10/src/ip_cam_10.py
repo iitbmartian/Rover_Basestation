@@ -30,7 +30,7 @@ class ipcamera(object):
 
 if __name__ == '__main__':
     try:
-        camUrl='rtsp://192.168.1.10:554/user=admin&password=&channel=1&stream=1.sdp'
+        camUrl='udp://:8554'
         rospy.init_node('ipcam_10', anonymous=True)
         ip_camera = ipcamera(camUrl)
 
