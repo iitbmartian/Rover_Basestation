@@ -1,9 +1,0 @@
-#!/bin/bash
-
-cd /home/agrim/bts_ws
-source devel/setup.bash
-
-export ROS_MASTER_URI=http://192.168.1.81:11311
-export ROS_IP=192.168.1.102
-
-roslaunch rover_mobility joystick_run.launch
