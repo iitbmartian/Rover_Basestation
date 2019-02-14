@@ -21,9 +21,9 @@ import matplotlib.pyplot as plt
 import time
 
 def sigint_handler(signal,frame):
-    global RSSI_vals
-    np.save('RSSI_inc_3.npy',np.array(RSSI_vals))
-    sys.exit(0)
+	global RSSI_vals
+	np.save('RSSI_vals.npy',np.array(RSSI_vals))
+	sys.exit(0)
 
 signal.signal(signal.SIGINT,sigint_handler)
 
@@ -52,18 +52,23 @@ time.sleep(1)
 def check_RSSI(history):
 	data = history.values
 	data = [x for x in data]
+	yhat_values = np.array([])
 	for i in range(0,3):
 		model = ARIMA(data, order=(5,2,0))
 		model_fit = model.fit(disp=0)
 		output = model_fit.forecast()
 		yhat = output[0]
 		data.append(yhat)
-		print(yhat)
-		# RSSI_data[1] = yhat
+		print("Predicted Yhat = " + str(yhat))
+
+		yhat_values = np.append(yhat_values, yhat)
 		if(yhat < 12):
 			print("Stop!")
 			# RSSI_msg.publish("Stop")
 
+	predicted_yhat = yhat_values[2]*0.5+yhat_values[1]*0.3+yhat_values[0]*0.2
+	print("Predicted weighted yhat = " + str(predicted_yhat))
+	return yhat_values
 
 
 RSSI_vals=np.array([])
@@ -78,17 +83,29 @@ ydata = []
 plt.show()
 axes = plt.gca()
 axes.set_xlim(0, 150)
-axes.set_ylim(-10, 60)
+axes.set_ylim(-10, 80)
 line, = axes.plot(xdata, ydata, 'r-')
+
+past_value_1 = 0
+past_value_2 = 0
+past_value_3 = 0
 
 while True:
 	iframe = webbrowser.find_element_by_id("mainframe")
 	webbrowser.switch_to.frame(iframe)
 	elem = webbrowser.find_element_by_xpath('//tbody[@class="striped"]/tr/td[5]')
 	value=int(elem.text)
-	RSSI_vals = np.append(RSSI_vals,value)
-	# RSSI_data[0] = value
-	# RSSI_data[1] = 0
+	
+	if(not((past_value_1 == past_value_2) and (past_value_2 == past_value_3) and (past_value_3 == value))):
+		RSSI_vals = np.append(RSSI_vals,value)
+	else:
+		webbrowser.refresh()
+		time.sleep(2)
+		continue
+
+	past_value_1 = past_value_2
+	past_value_2 = past_value_3
+	past_value_3 = value
 	
 	if(len(RSSI_vals)<=5):
 		smooth_RSSI = np.append(smooth_RSSI, np.mean(RSSI_vals))
@@ -109,18 +126,28 @@ while True:
 	ydata.append(RSSI_vals[-1])
 	line.set_xdata(xdata)
 	line.set_ydata(ydata)
-	plt.draw()
-	plt.pause(1e-17)
+	
 	
 	history = history.append({'RSSI':smooth_RSSI[-1]}, ignore_index = True)
 	# print(history)
-	if (value < 20 and len(RSSI_vals) > 20):
+
+	
+
+	if (value < 20 and len(RSSI_vals) > 10):
 		# print(history)
-		check_RSSI(history)
+		yhat_values = check_RSSI(history)
+		RSSI_len = len(RSSI_vals)
+		xdata1 = [RSSI_len+1, RSSI_len+2, RSSI_len+3]
+
+		line2, = axes.plot(xdata1, yhat_values, 'b-')
+
+	plt.draw()
+	plt.pause(1e-17)
+
 
 	# RSSI_pub.publish(data=RSSI_data)
 	webbrowser.refresh()
-	time.sleep(1)
+	time.sleep(2)
 	
 
 
