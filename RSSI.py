@@ -11,7 +11,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import numpy as np
 
-from matplotlib import pyplot
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
 from pandas import *
@@ -62,12 +61,12 @@ def check_RSSI(history):
 		print("Predicted Yhat = " + str(yhat))
 
 		yhat_values = np.append(yhat_values, yhat)
-		if(yhat < 12):
+		if(yhat < 14):
 			print("Stop!")
 			# RSSI_msg.publish("Stop")
 
-	predicted_yhat = yhat_values[2]*0.5+yhat_values[1]*0.3+yhat_values[0]*0.2
-	print("Predicted weighted yhat = " + str(predicted_yhat))
+	# predicted_yhat = yhat_values[2]*0.5+yhat_values[1]*0.3+yhat_values[0]*0.2
+	# print("Predicted weighted yhat = " + str(predicted_yhat))
 	return yhat_values
 
 
@@ -80,11 +79,20 @@ RSSI_data = np.zeros(2)
 ##PLotting code
 xdata = []
 ydata = []
+xdata2 = []
+ydata2 = []
 plt.show()
 axes = plt.gca()
 axes.set_xlim(0, 150)
-axes.set_ylim(-10, 80)
-line, = axes.plot(xdata, ydata, 'r-')
+axes.set_ylim(0, 80)
+axes.set(xlabel='time', ylabel='RSSI', title='Prediction plot')
+line, = axes.plot(xdata, ydata, linewidth=2, color='g')
+line2, = axes.plot(xdata2, ydata2, '--', linewidth=2, color='b')
+
+##
+x = np.arange(0,151,1)
+axes.hlines(y=13, xmin=0, xmax=151, linewidth=3, color='r')
+axes.fill_between(x, 0, 13, facecolor='tan')
 
 past_value_1 = 0
 past_value_2 = 0
@@ -127,27 +135,18 @@ while True:
 	line.set_xdata(xdata)
 	line.set_ydata(ydata)
 	
-	
 	history = history.append({'RSSI':smooth_RSSI[-1]}, ignore_index = True)
-	# print(history)
-
 	
-
-	if (value < 20 and len(RSSI_vals) > 10):
-		# print(history)
+	if (value < 20 and len(RSSI_vals) > 20):
 		yhat_values = check_RSSI(history)
 		RSSI_len = len(RSSI_vals)
-		xdata1 = [RSSI_len+1, RSSI_len+2, RSSI_len+3]
-
-		line2, = axes.plot(xdata1, yhat_values, 'b-')
+		xdata2 = [RSSI_len+1, RSSI_len+2, RSSI_len+3]
+		line2.set_xdata(xdata2)
+		line2.set_ydata(yhat_values)
 
 	plt.draw()
 	plt.pause(1e-17)
 
-
 	# RSSI_pub.publish(data=RSSI_data)
 	webbrowser.refresh()
 	time.sleep(2)
-	
-
-
