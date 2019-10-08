@@ -36,9 +36,14 @@ OR
 
 1. sudo nano /etc/network/interfaces
 
-OR
-
-### Run a sftp client to get file structure. For this:
-
+## Run a sftp client to get file structure. For this:
 1. Go to Files -> Connect to server
 2. In server address, type sftp://rover-nuc@ip.ip.ip.ip/ to start sftp session
+
+## Interface settings
+1. `ls /dev` gives the list of devices connected to the computer
+2. Look out for `ttyACMx`, it denotes USB port x+1, using `ls /dev | grep ttyACMx`  
+3. Rules of interfacing are present in `/etc/udev` folder
+4. Edit `72-roboclaw.rules` as per requirement
+5. Use `udevadm info -a -n /dev/ttyACM0 | grep '{product}'`and `udevadm info -a -n /dev/ttyACM0 | grep '{product}'` to find `ATTRS{product}` and `ATTRS{devpath}` respectively
+6. To grant necessary permissions to the interface ports use `sudo chmod 666 /dev/ttyACM*`
