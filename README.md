@@ -45,5 +45,5 @@ OR
 2. Look out for `ttyACMx`, it denotes USB port x+1, using `ls /dev | grep ttyACMx`  
 3. Rules of interfacing are present in `/etc/udev` folder
 4. Edit `72-roboclaw.rules` as per requirement
-5. Use `udevadm info -a -n /dev/ttyACM0 | grep '{product}'`and `udevadm info -a -n /dev/ttyACM0 | grep '{product}'` to find `ATTRS{product}` and `ATTRS{devpath}` respectively
+5. Use `udevadm info -a -n /dev/ttyACM0 | grep '{product}'`and `udevadm info -a -n /dev/ttyACM0 | grep '{product}'` to find `ATTRS{product}` and `ATTRS{devpath}` respectively of the port ttyACM0
 6. To grant necessary permissions to the interface ports use `sudo chmod 666 /dev/ttyACM*`
