@@ -28,7 +28,7 @@ The following Repo contains Base Station code for MSI 2016.
 -- to shutdown --
 3. sudo shutdown now
 
-## How to setup wifi settings from a tenminal
+## How to setup wifi settings from a terminal
 1. sudo nano /etc/wpa_supplicant/
 2. wpa_supplicant.conf
 
