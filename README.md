@@ -6,8 +6,8 @@ The following Repo contains Base Station code for MSI 2016.
 
 ## How to charge batteries:
 1. Get a multimeter, check the charges and compare it with rating
-2. If charge is less connect the battery to the chargee () using THINNER WIRED SIDE
-3. Keep checking the charge state regularly, diconnect one rating value is reached
+2. If charge is less connect the battery to the charger using THINNER WIRED SIDE
+3. Keep checking the charge state regularly, diconnect once rating value is reached
 
 ## How to create a ROS workspace:
 1. Create a new directory
